@@ -27,7 +27,8 @@ class JsonFile:
         return self.json_to_dict().get(key) if not return_path else Path(self.json_to_dict().get(key))
     
     
-    def set_value(self, key: str, value: bool | int | float | str | list | dict | None) -> bool | int | float | str | list | dict | None:
+    def set_value(self, key: str, value: bool | int | float | str | list | dict | Path | None) -> None:
+        value = str(value) if isinstance(value, Path) else value
         dictionnary: dict = self.json_to_dict()
         dictionnary[key] = value
         self.dict_to_json(dictionnary)
