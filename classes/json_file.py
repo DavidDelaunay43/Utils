@@ -23,8 +23,8 @@ class JsonFile:
         return
     
     
-    def get_value(self, key: str) -> bool | int | float | str | list | dict | None:
-        return self.json_to_dict().get(key)
+    def get_value(self, key: str, return_path: bool = False) -> bool | int | float | str | list | dict | Path | None:
+        return self.json_to_dict().get(key) if not return_path else Path(self.json_to_dict().get(key))
     
     
     def set_value(self, key: str, value: bool | int | float | str | list | dict | None) -> bool | int | float | str | list | dict | None:
