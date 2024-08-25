@@ -65,15 +65,16 @@ class AppFinder:
     def find_directory(parent_directory: Path, directory_string: str, exclude_strings = [], exe=False) -> Path:
         for dir in parent_directory.iterdir():
             dir_name: str = dir.name
-            if dir_name.startswith(directory_string):
-                if dir_name in exclude_strings:
-                        continue
-                if exe:
-                    if dir_name.endswith('.exe'):
-                        return dir
-                else:
+            if not dir_name.startswith(directory_string):
+                continue
+            if dir_name in exclude_strings:
+                    continue
+            if exe:
+                if dir_name.endswith('.exe'):
                     return dir
-            
+            else:
+                return dir
+        
     
     @classmethod  
     def find_blender(cls) -> Path:
