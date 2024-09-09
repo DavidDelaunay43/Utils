@@ -155,10 +155,11 @@ class AppFinder:
 
 
 if __name__ == '__main__':
-    
-    print(AppFinder.get_user_dir())
-    print(AppFinder.get_program_files_dir())
-    print(AppFinder.app_dict)
-    AppFinder.find_3d_applications()
-    print(AppFinder.app_dict)
-    AppFinder.write_json_file(json_filepath='tmp.json')
+    def main() -> None:
+        print(AppFinder.get_user_dir())
+        print(AppFinder.get_program_files_dir())
+        print(AppFinder.app_dict)
+        AppFinder.find_3d_applications()
+        print(AppFinder.app_dict)
+        AppFinder.write_json_file(json_filepath='tmp.json')
+    main()
