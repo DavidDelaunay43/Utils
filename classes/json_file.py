@@ -7,7 +7,7 @@ class JsonFile:
     
     
     def __init__(self, path: Union[str, Path]) -> None:
-        self._path = Path(path) 
+        self._path: Path = Path(path) 
         self._name = self._path.name
 
 
@@ -18,7 +18,7 @@ class JsonFile:
     
     @path.setter
     def path(self, new_path: Union[str, Path]) -> None:
-        self._path = Path(new_path)
+        self._path = Path(new_path) if not isinstance(new_path, Path) else new_path
         self._name = self._path.name
     
     
