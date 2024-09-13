@@ -18,7 +18,7 @@ class JsonFile:
     
     
     def __init__(self, path: Union[str, Path]) -> None:
-        self._path: Path = Path(path) 
+        self._path: Path = Path(path).absolute()
         self._name = self._path.name
 
 
@@ -157,7 +157,7 @@ if __name__ == '__main__':
     """
     Outputs:
     
-    JsonFile path: test_js.json
+    JsonFile path: e:\Art\3D\Dev\Utils\test_js.json
     JsonFile name: test_js.json
     JsonFile dict: {'user': 'duchnock', 'department': 'rigging'}
     JsonFile department value: rigging
