@@ -100,13 +100,25 @@ class Logger:
         logger.addHandler(file_handler)
 
 
+
+def main() -> None:
+    log_path: str = 'test.log'
+    Logger.LOGGER_NAME = f'{__file__}'
+    Logger.write_to_file(path=log_path, level=logging.DEBUG)
+    Logger.info('info')
+    Logger.critical("critical")
+    Logger.warning('warning')
+    Logger.debug("debug")
+    
+
 if __name__ == '__main__':
-    def main() -> None:
-        log_path: str = 'test.log'
-        Logger.LOGGER_NAME = f'{__file__}'
-        Logger.write_to_file(path=log_path, level=logging.DEBUG)
-        Logger.info('info')
-        Logger.critical("critical")
-        Logger.warning('warning')
-        Logger.debug("debug")
     main()
+    
+    """
+    Outputs:
+    
+    [2024-09-13 14:28:41][e:\Art\3D\Dev\Utils\classes\logger.py][INFO] info
+    [2024-09-13 14:28:41][e:\Art\3D\Dev\Utils\classes\logger.py][CRITICAL] critical
+    [2024-09-13 14:28:41][e:\Art\3D\Dev\Utils\classes\logger.py][WARNING] warning
+    [2024-09-13 14:28:41][e:\Art\3D\Dev\Utils\classes\logger.py][DEBUG] debug
+    """

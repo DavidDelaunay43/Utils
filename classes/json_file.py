@@ -4,6 +4,17 @@ from typing import Union
 
 
 class JsonFile:
+    """
+    A class to manage reading from and writing to JSON files. The class provides methods for 
+    converting JSON data to a dictionary, updating values, and working with file paths.
+
+    Attributes
+    ----------
+    _path : Path
+        The path to the JSON file.
+    _name : str
+        The name of the JSON file.
+    """
     
     
     def __init__(self, path: Union[str, Path]) -> None:
@@ -28,12 +39,40 @@ class JsonFile:
 
 
     def json_to_dict(self) -> dict:
+        """
+        Reads the JSON file and converts it to a dictionary.
+
+        Returns
+        -------
+        dict
+            A dictionary representation of the JSON file content.
+
+        Raises
+        ------
+        FileNotFoundError
+            If the JSON file does not exist at the specified path.
+        """
+        
         with open(self._path, 'r', encoding='utf-8') as file:
             dico = json.load(file)
         return dico
 
 
     def dict_to_json(self, dictionary: dict) -> None:
+        
+        """
+        Writes a dictionary to the JSON file.
+
+        Parameters
+        ----------
+        dictionary : dict
+            The dictionary to be written to the JSON file.
+        
+        Notes
+        -----
+        Any `Path` objects in the dictionary are automatically converted to strings.
+        """
+        
         dictionary = {key: str(value) if isinstance(value, Path) else value for key, value in dictionary.items()}
         with open(self._path, 'w', encoding='utf-8') as file:
             json.dump(dictionary, file, indent=4, ensure_ascii=False)
@@ -41,12 +80,86 @@ class JsonFile:
     
     
     def get_value(self, key: str, return_path: bool = False) -> Union[bool, int, float, str, list, dict, Path, None]:
+        """
+        Retrieves the value associated with a key from the JSON file.
+
+        Parameters
+        ----------
+        key : str
+            The key for which the value is to be retrieved.
+        return_path : bool, optional
+            If True, returns the value as a Path object if the value is a string (default is False).
+
+        Returns
+        -------
+        Union[bool, int, float, str, list, dict, Path, None]
+            The value associated with the key in the JSON file. If `return_path` is True and the value is a string, 
+            it will be returned as a Path object.
+
+        Raises
+        ------
+        KeyError
+            If the key is not found in the JSON file.
+        """
+        
         value = self.json_to_dict().get(key)
         return Path(value) if return_path and isinstance(value, str) else value
     
     
     def set_value(self, key: str, value: Union[bool, int, float, str, list, dict, Path, None]) -> None:
+        """
+        Updates or adds a key-value pair in the JSON file.
+
+        Parameters
+        ----------
+        key : str
+            The key to be added or updated in the JSON file.
+        value : Union[bool, int, float, str, list, dict, Path, None]
+            The value to be assigned to the key. Path objects are converted to strings.
+
+        Raises
+        ------
+        FileNotFoundError
+            If the JSON file does not exist.
+        """
+        
         value = str(value) if isinstance(value, Path) else value
         dictionnary = self.json_to_dict()
         dictionnary[key] = value
         self.dict_to_json(dictionnary)
+
+
+def main() -> None:
+    
+    # Create example json file
+    json_filepath: str = 'test_js.json'
+    example_dict: dict = {
+        "user": "duchnock",
+        "department": "rigging"
+    }
+    
+    with open(json_filepath, 'w', encoding='utf-8') as file:
+        json.dump(example_dict, file, indent=4, ensure_ascii=False)
+    
+    # Test JsonFile instance
+    json_file: JsonFile = JsonFile(path=json_filepath)
+    print(f'JsonFile path: {json_file.path}')
+    print(f'JsonFile name: {json_file.name}')
+    print(f'JsonFile dict: {json_file.json_to_dict()}')
+    print(f'JsonFile department value: {json_file.get_value("department")}')
+    json_file.set_value(key='department', value='animation')
+    print(f'JsonFile dict update: {json_file.json_to_dict()}')
+
+
+if __name__ == '__main__':
+    main()
+    
+    """
+    Outputs:
+    
+    JsonFile path: test_js.json
+    JsonFile name: test_js.json
+    JsonFile dict: {'user': 'duchnock', 'department': 'rigging'}
+    JsonFile department value: rigging
+    JsonFile dict update: {'user': 'duchnock', 'department': 'animation'}
+    """

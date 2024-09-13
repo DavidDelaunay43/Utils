@@ -4,6 +4,24 @@ from typing import Union
 
 
 class AppFinder:
+    """
+    A class to locate installed 3D and digital content creation applications on the system (Windows).
+    This class allows for customization of the directories and can generate a JSON file with the paths 
+    to applications and their preferences.
+    
+    Attributes
+    ----------
+    _program_files : Path
+        The default path to 'Program Files' directory.
+    _user_dir : Path
+        The default path to the user's home directory.
+    _documents_dir : Path
+        The path to the 'Documents' directory of the user.
+    APPS : tuple
+        A tuple containing the names of supported applications.
+    app_dict : dict
+        A dictionary containing application details, including paths and preferences.
+    """
     
     
     _program_files: Path = Path('C:/Program Files')
@@ -14,28 +32,74 @@ class AppFinder:
     
     
     @classmethod
+    def show_app_dict(cls) -> None:
+        print(json.dumps(cls.app_dict, indent=4))
+    
+    
+    @classmethod
     def get_user_dir(cls) -> Path:
+        """
+        Returns the path to the user's home directory.
+
+        Returns
+        -------
+        Path
+            The path to the user's home directory.
+        """
+        
         return cls._user_dir
     
     
     @classmethod
     def set_user_dir(cls, new_path: Union[str, Path]) -> None:
+        """
+        Updates the user's home directory path and recalculates the path to the 'Documents' directory.
+
+        Parameters
+        ----------
+        new_path : Union[str, Path]
+            The new path to set as the user's home directory.
+        """
+        
         cls._user_dir = Path(new_path) if not isinstance(new_path, Path) else new_path
         cls._documents_dir = cls._user_dir.joinpath('Documents')
         
         
     @classmethod
     def get_program_files_dir(cls) -> Path:
+        """
+        Returns the path to the 'Program Files' directory.
+
+        Returns
+        -------
+        Path
+            The path to the 'Program Files' directory.
+        """
+        
         return cls._program_files
     
     
     @classmethod
     def set_program_files_dir(cls, new_path: Union[str, Path]) -> None:
+        """
+        Updates the 'Program Files' directory path.
+
+        Parameters
+        ----------
+        new_path : Union[str, Path]
+            The new path to set as the 'Program Files' directory.
+        """
+        
         cls._program_files = Path(new_path) if not isinstance(new_path, Path) else new_path
 
     
     @classmethod
     def find_3d_applications(cls) -> None:
+        """
+        Populates the `app_dict` with paths and preference directories for 3D and content creation applications.
+        The method searches for Blender, Krita, Houdini, Mari, Maya, Nuke, Photoshop, and ZBrush, 
+        and updates their paths and preference directories in `app_dict`.
+        """
         
         cls.app_dict['blender']['path'] = str(cls.find_blender())
         cls.app_dict['krita']['path'] = str(cls.find_krita())
@@ -54,6 +118,14 @@ class AppFinder:
 
     @classmethod
     def write_json_file(cls, json_filepath: Union[str, Path]):
+        """
+        Writes the application dictionary (`app_dict`) to a JSON file.
+
+        Parameters
+        ----------
+        json_filepath : Union[str, Path]
+            The path to the JSON file where the application data will be saved.
+        """
         
         cls.find_3d_applications()
         
@@ -63,6 +135,26 @@ class AppFinder:
     
     @staticmethod
     def find_directory(parent_directory: Path, directory_string: str, exclude_strings = [], exe=False) -> Path:
+        """
+        Searches for a directory or executable file in a given parent directory based on a string pattern.
+
+        Parameters
+        ----------
+        parent_directory : Path
+            The directory where the search will be performed.
+        directory_string : str
+            The string pattern to match the directory or file names.
+        exclude_strings : list, optional
+            A list of strings to exclude from the search results. Default is an empty list.
+        exe : bool, optional
+            If True, searches for executable files (.exe); otherwise, searches for directories. Default is False.
+
+        Returns
+        -------
+        Path
+            The path to the matching directory or executable file.
+        """
+        
         for dir in parent_directory.iterdir():
             dir_name: str = dir.name
             if not dir_name.startswith(directory_string):
@@ -154,12 +246,161 @@ class AppFinder:
         return cls._user_dir.joinpath('.nuke')
 
 
+def main() -> None:
+    print(f'User directory: {AppFinder.get_user_dir()}')
+    print(f'Program Files directory: {AppFinder.get_program_files_dir()}')
+    print(f'Default app dict:')
+    AppFinder.show_app_dict()
+    AppFinder.find_3d_applications()
+    print(f'Updated app dict:')
+    AppFinder.show_app_dict()
+    AppFinder.write_json_file(json_filepath='tmp.json')
+        
+
 if __name__ == '__main__':
-    def main() -> None:
-        print(AppFinder.get_user_dir())
-        print(AppFinder.get_program_files_dir())
-        print(AppFinder.app_dict)
-        AppFinder.find_3d_applications()
-        print(AppFinder.app_dict)
-        AppFinder.write_json_file(json_filepath='tmp.json')
     main()
+    
+    """
+    Outputs (on my Window computer):
+    
+    User directory: C:\Users\David
+    Program Files directory: C:\Program Files
+    Default app dict:
+    {
+        "blender": {
+            "path": null,
+            "pref": null,
+            "python_path": null,
+            "file": null
+        },
+        "it": {
+            "path": null,
+            "pref": null,
+            "python_path": null,
+            "file": null
+        },
+        "krita": {
+            "path": null,
+            "pref": null,
+            "python_path": null,
+            "file": null
+        },
+        "houdini": {
+            "path": null,
+            "pref": null,
+            "python_path": null,
+            "file": null
+        },
+        "maya": {
+            "path": null,
+            "pref": null,
+            "python_path": null,
+            "file": null
+        },
+        "mari": {
+            "path": null,
+            "pref": null,
+            "python_path": null,
+            "file": null
+        },
+        "nuke": {
+            "path": null,
+            "pref": null,
+            "python_path": null,
+            "file": null
+        },
+        "photoshop": {
+            "path": null,
+            "pref": null,
+            "python_path": null,
+            "file": null
+        },
+        "substance_designer": {
+            "path": null,
+            "pref": null,
+            "python_path": null,
+            "file": null
+        },
+        "substance_painter": {
+            "path": null,
+            "pref": null,
+            "python_path": null,
+            "file": null
+        },
+        "zbrush": {
+            "path": null,
+            "pref": null,
+            "python_path": null,
+            "file": null
+        }
+    }
+    Updated app dict:
+    {
+        "blender": {
+            "path": "C:\\Program Files\\Blender Foundation\\Blender 4.1\\blender.exe",
+            "pref": null,
+            "python_path": null,
+            "file": null
+        },
+        "it": {
+            "path": null,
+            "pref": null,
+            "python_path": null,
+            "file": null
+        },
+        "krita": {
+            "path": "C:\\Program Files\\Krita (x64)\\bin\\krita.exe",
+            "pref": null,
+            "python_path": null,
+            "file": null
+        },
+        "houdini": {
+            "path": "C:\\Program Files\\Side Effects Software\\Houdini20.5.278\\bin\\houdini.exe",
+            "pref": "C:\\Users\\David\\Documents\\houdini20.0",
+            "python_path": null,
+            "file": null
+        },
+        "maya": {
+            "path": "C:\\Program Files\\Autodesk\\Maya2023\\bin\\maya.exe",
+            "pref": "C:\\Users\\David\\Documents\\maya",
+            "python_path": null,
+            "file": null
+        },
+        "mari": {
+            "path": "C:\\Program Files\\Mari7.0v2\\Bundle\\bin\\Mari7.0v2.exe",
+            "pref": "C:\\Users\\David\\.mari",
+            "python_path": null,
+            "file": null
+        },
+        "nuke": {
+            "path": "C:\\Program Files\\Nuke15.1v1\\Nuke15.1.exe",
+            "pref": "C:\\Users\\David\\.nuke",
+            "python_path": null,
+            "file": null
+        },
+        "photoshop": {
+            "path": "C:\\Program Files\\Adobe\\Adobe Photoshop 2023\\Photoshop.exe",
+            "pref": null,
+            "python_path": null,
+            "file": null
+        },
+        "substance_designer": {
+            "path": null,
+            "pref": null,
+            "python_path": null,
+            "file": null
+        },
+        "substance_painter": {
+            "path": null,
+            "pref": null,
+            "python_path": null,
+            "file": null
+        },
+        "zbrush": {
+            "path": "C:\\Program Files\\Maxon ZBrush 2024\\ZBrush.exe",
+            "pref": null,
+            "python_path": null,
+            "file": null
+        }
+    }
+    """
